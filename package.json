@@ -1,0 +1,38 @@
+{
+  "name": "qrloop",
+  "version": "0.1.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "flow-typed": "flow-typed install -s",
+    "build": "babel --ignore __tests__ -sd lib src && flow-copy-source -i \"__tests__/**\" src lib",
+    "prepublish": "yarn build",
+    "watch": "babel -wsd lib src && flow-copy-source -wv src lib",
+    "prettier": "prettier --write 'src/**/*.js'",
+    "lint": "eslint src",
+    "flow": "flow src",
+    "test": "jest src"
+  },
+  "author": "Gaëtan Renaudeau <renaudeau.gaetan@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "flow-typed": "^2.5.1",
+    "md5": "^2.2.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^23.6.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "eslint": "^5.6.1",
+    "eslint-plugin-babel": "^5.2.1",
+    "eslint-plugin-flowtype": "^2.50.3",
+    "flow-bin": "^0.82.0",
+    "flow-copy-source": "^2.0.2",
+    "jest": "^23.6.0",
+    "prettier": "^1.14.3"
+  }
+}
