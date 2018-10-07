@@ -78,3 +78,25 @@ const onBarCodeScanned = (data: string) => {
 ```
 
 You can find an implementation example in [`examples/rn-text-importer`](examples/rn-text-importer).
+
+## Trade-offs
+
+### finding the correct QRCode dataSize
+
+To find a good QRCode data size, we want to optimize the data we can put in each frame but we must not have a too big QR Code otherwise phones would have issues scanning it.
+
+Empirical tests has shown that data size between 100-200 are the best and that after 200 threshold, the ability for phones starts to decline. A counter-intuitive result we have found is that QR Code with really few data in it (like below 50 bytes) are not easier to read than just 150 bytes and sometimes are even slower to read!
+
+We have run an internal benchmark on various phones and get this result:
+
+<img src="https://user-images.githubusercontent.com/211411/46581570-0c1e6580-ca3b-11e8-962a-7156dd7e9202.png">
+
+### troubleshooting frames not getting caught
+
+Since this is an unidirectional data stream, we can't tell the emitter to slow down or inform it what are the missing frames. Therefore, the emitter can just loop over all the frames until they are all parsed.
+
+Statistically, this means the phone will catch many frames at the beginning and it will get harder and harder to catch the last frame. Statistically, the phone will eventually get all the frames but it can be a frustrating experience to be stuck with one last missing frame.
+
+To troubleshoot this, you can try different FPS speed. Experience have shown phones are able to scan about 30 frames per second (depends on implementations) but in practice it's better to be at max 5 fps.
+
+We also have empirically found that some frames are randomly harder for phone to catch. Therefore, we have in this library a concept of "replicas" which basically replicates frames with a nonce: one byte in the QR Code data completely change the qrcode, increasing our chance of falling on an "easy" frame.
