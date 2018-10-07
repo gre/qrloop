@@ -58,6 +58,7 @@ export default class QRLoopScanner extends React.Component<
         type={Camera.Constants.Type.back}
         onBarCodeScanned={this.onBarCodeScanned}
       >
+        <Text style={styles.title}>qrloop.netlify.com</Text>
         <Text style={styles.title}>Scan the QRCode loop</Text>
         <View style={styles.rect} />
         <Progress.Circle

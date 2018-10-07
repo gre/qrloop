@@ -34,6 +34,12 @@ class App extends Component<{}, { value: string, frames: ?(string[]) }> {
       <div className="App">
         <button onClick={this.onExport}>Export This Text</button>
         <textarea value={value} onChange={this.onChange} />
+        <footer>
+          Expo app:{" "}
+          <a href="https://exp.host/@gre/rn-text-importer">
+            https://exp.host/@gre/rn-text-importer
+          </a>
+        </footer>
       </div>
     );
   }
