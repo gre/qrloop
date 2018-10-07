@@ -31,7 +31,7 @@ function cut(data: Buffer, size: number): Buffer[] {
  */
 export function dataToFrames(
   dataOrStr: Buffer,
-  dataSize: number,
+  dataSize: number = 120,
   replicas: number = 1
 ): string[] {
   const data = Buffer.from(dataOrStr);

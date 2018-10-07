@@ -1,7 +1,14 @@
 {
   "name": "qrloop",
   "version": "0.4.0",
-  "description": "",
+  "description": "Envelop big blob of data into frames that can be displayed in series of QR Codes",
+  "keywords": [
+    "buffer",
+    "data",
+    "envelop",
+    "qrcode",
+    "qr"
+  ],
   "main": "lib/index.js",
   "scripts": {
     "flow-typed": "flow-typed install -s",
@@ -19,6 +26,14 @@
     "exporter.js",
     "importer.js"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gre/qrloop"
+  },
+  "bugs": {
+    "url": "https://github.com/gre/qrloop/issues"
+  },
+  "homepage": "https://github.com/gre/qrloop",
   "author": "Gaëtan Renaudeau <renaudeau.gaetan@gmail.com>",
   "license": "MIT",
   "dependencies": {
