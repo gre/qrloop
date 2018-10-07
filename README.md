@@ -100,3 +100,12 @@ Statistically, this means the phone will catch many frames at the beginning and 
 To troubleshoot this, you can try different FPS speed. Experience have shown phones are able to scan about 30 frames per second (depends on implementations) but in practice it's better to be at max 5 fps.
 
 We also have empirically found that some frames are randomly harder for phone to catch. Therefore, we have in this library a concept of "replicas" which basically replicates frames with a nonce: one byte in the QR Code data completely change the qrcode, increasing our chance of falling on an "easy" frame.
+
+### Data validation using a checksum
+
+On top of QRCode built-in checksums, we have a data length check and md5 checksum validation over the data to make sure some frame are not corrupted. The library is also able to recover from any possible frame corruption state (if you continue scanning, it should eventually correct).
+
+### Encoding complex objects
+
+To encode complex objects like JavaScript objects over the data, you can just use `JSON.stringify`.
+Since the result of `JSON.stringify` is not really optimized, you can then compress it using any compression algorithm like GZIP or `node-lzw` (my preferred because concise).
