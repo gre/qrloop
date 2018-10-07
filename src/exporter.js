@@ -30,10 +30,11 @@ function cut(data: Buffer, size: number): Buffer[] {
  *
  */
 export function dataToFrames(
-  data: Buffer,
+  dataOrStr: Buffer,
   dataSize: number,
   replicas: number = 1
 ): string[] {
+  const data = Buffer.from(dataOrStr);
   const lengthBuffer = Buffer.alloc(4);
   lengthBuffer.writeUInt32BE(data.length, 0);
   const md5Buffer = Buffer.from(md5(data), "hex");

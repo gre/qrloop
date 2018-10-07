@@ -15,7 +15,9 @@
   },
   "files": [
     "lib",
-    "src"
+    "src",
+    "exporter.js",
+    "importer.js"
   ],
   "author": "Gaëtan Renaudeau <renaudeau.gaetan@gmail.com>",
   "license": "MIT",
