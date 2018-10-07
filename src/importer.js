@@ -28,16 +28,13 @@ export function parseFramesReducer(state: State, chunkStr: string): State {
   if (index < 0 || index >= framesCount) {
     throw new Error("invalid index");
   }
-  if (frames.length > 0 && framesCount !== frames[0].framesCount) {
-    throw new Error(
-      `different dataLength. Got: ${framesCount}, Expected: ${
-        frames[0].framesCount
-      }`
-    );
-  }
-  return frames
-    .filter(c => c.index !== index) // rewrite a frame in case previous was corrupted
-    .concat({ framesCount, index, data });
+
+  return (
+    frames
+      // override frame by index and also make sure all frames have same framesCount. this allows to not be stucked and recover any scenario.
+      .filter(c => c.index !== index && c.framesCount === framesCount)
+      .concat({ framesCount, index, data })
+  );
 }
 
 /**
