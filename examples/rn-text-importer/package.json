@@ -11,7 +11,7 @@
   "dependencies": {
     "buffer": "^5.2.1",
     "expo": "^30.0.1",
-    "qrloop": "^0.4.0",
+    "qrloop": "^0.6.0",
     "react": "16.3.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-30.0.0.tar.gz",
     "react-native-progress": "^3.5.0"

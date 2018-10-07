@@ -4556,10 +4556,10 @@ punycode@^2.1.0:
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
 
-qrloop@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/qrloop/-/qrloop-0.4.0.tgz#305f2a587c2d1de4eef2e0dc6a16b86629652471"
-  integrity sha512-2yrl9MEhINGnbF85YZOpOUJsKAevgNeFRjBdX8qgG+mLFJmimLMhCvYvoYgl09/5o/l30anoEGIwSNnGCa+u9w==
+qrloop@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/qrloop/-/qrloop-0.6.0.tgz#3de74fa9fff5eb74ad1c19f93a0016d8570f2a46"
+  integrity sha512-tLsE2CE4Zl+7tG6GrVBEtTeHvEYudQOEwyr0xXVmf+Z21QkBqzGvmGGDK9dOuJQ6SXpaTOfr4MthF9/CToZsBA==
   dependencies:
     flow-typed "^2.5.1"
     md5 "^2.2.1"
