@@ -81,6 +81,11 @@ You can find an implementation example in [`examples/rn-text-importer`](examples
 
 ## Trade-offs
 
+### You do not need this if...
+
+- You do not need this if your data can always fit in one big QR Code (check QR limits and test on phones).
+- You do not need this if you have network condition and don't have privacy constraints and can afford storing the data on a server and just have a token to get it. You can also maybe use encrypted data, but beware decryption keys could leak!
+
 ### finding the correct QRCode dataSize
 
 To find a good QRCode data size, we want to optimize the data we can put in each frame but we must not have a too big QR Code otherwise phones would have issues scanning it.
