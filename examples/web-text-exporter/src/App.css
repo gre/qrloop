@@ -1,0 +1,16 @@
+.App {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  width: 600px;
+  margin: 20px auto;
+}
+
+.App button {
+  padding: 1em;
+}
+
+.App textarea {
+  width: 600px;
+  height: 400px;
+}
