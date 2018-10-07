@@ -106,6 +106,10 @@ To troubleshoot this, you can try different FPS speed. Experience have shown pho
 
 We also have empirically found that some frames are randomly harder for phone to catch. Therefore, we have in this library a concept of "replicas" which basically replicates frames with a nonce: one byte in the QR Code data completely change the qrcode, increasing our chance of falling on an "easy" frame.
 
+### base64 on each frame
+
+Even though we can technically put binary data in QR Code, some reader implementation does not support this properly (for instance on iOS unless relying on undocumented hack https://stackoverflow.com/questions/32429480/read-binary-qr-code-with-avfoundation ). We have therefore chosen to convert frames to base64 (because built in Buffer). The overhead is acceptable.
+
 ### Data validation using a checksum
 
 On top of QRCode built-in checksums, we have a data length check and md5 checksum validation over the data to make sure some frame are not corrupted. The library is also able to recover from any possible frame corruption state (if you continue scanning, it should eventually correct).
