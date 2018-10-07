@@ -10,7 +10,7 @@ import {
 
 test("empty data", () => {
   const str = "";
-  const framesExport = dataToFrames(Buffer.from(str), 100);
+  const framesExport = dataToFrames(str);
   const framesImport = framesExport.reduce(parseFramesReducer, undefined);
   expect(areFramesComplete(framesImport)).toBe(true);
   expect(progressOfFrames(framesImport)).toBe(1);
@@ -22,7 +22,7 @@ test("empty data", () => {
 
 test("'hello world'", () => {
   const str = "hello world";
-  const framesExport = dataToFrames(Buffer.from(str), 100);
+  const framesExport = dataToFrames(str);
   const framesImport = framesExport.reduce(parseFramesReducer, undefined);
   expect(areFramesComplete(framesImport)).toBe(true);
   expect(progressOfFrames(framesImport)).toBe(1);
