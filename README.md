@@ -2,7 +2,7 @@
 
 Envelop big blob of data into frames that can be displayed in series of QR Codes.
 
-![example](https://user-images.githubusercontent.com/211411/46581095-0c663300-ca32-11e8-8366-5d4205a6e14f.gif)
+<img src="https://user-images.githubusercontent.com/211411/46581095-0c663300-ca32-11e8-8366-5d4205a6e14f.gif" width="400" />
 
 > NB. this library is generic enough to not even be used with QR Codes but still take optimization decision in regard to how QR code works and from empirical tests.
 
@@ -65,7 +65,7 @@ let frames = null;
 
 const onBarCodeScanned = (data: string) => {
   try {
-    frames = parseFramesReducer(this.frames, data);
+    frames = parseFramesReducer(frames, data);
     if (areFramesComplete(frames)) {
       onResult(framesToData(frames).toString());
     } else {
