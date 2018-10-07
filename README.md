@@ -2,7 +2,7 @@
 
 Envelop big blob of data into frames that can be displayed in series of QR Codes.
 
-<img src="https://user-images.githubusercontent.com/211411/46581095-0c663300-ca32-11e8-8366-5d4205a6e14f.gif" width="500" /> <img src="https://user-images.githubusercontent.com/211411/46581275-1db13e80-ca36-11e8-9053-325b75511883.gif" width="400" />
+<img src="https://user-images.githubusercontent.com/211411/46581095-0c663300-ca32-11e8-8366-5d4205a6e14f.gif" width="450" /> <img src="https://user-images.githubusercontent.com/211411/46581275-1db13e80-ca36-11e8-9053-325b75511883.gif" width="400" />
 
 > NB. this library is generic enough to not even be used with QR Codes but still take optimization decision in regard to how QR code works and from empirical tests.
 
