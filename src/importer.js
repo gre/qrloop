@@ -35,11 +35,9 @@ export function parseFramesReducer(state: State, chunkStr: string): State {
       }`
     );
   }
-  if (frames.some(c => c.index === index)) {
-    // chunk already exists. we are just ignoring
-    return frames;
-  }
-  return frames.concat({ framesCount, index, data });
+  return frames
+    .filter(c => c.index !== index) // rewrite a frame in case previous was corrupted
+    .concat({ framesCount, index, data });
 }
 
 /**
