@@ -2,6 +2,7 @@
 
 import md5 from "md5";
 import { Buffer } from "buffer";
+import { MAX_REPLICAS } from "./constants";
 
 function cut(data: Buffer, size: number): Buffer[] {
   const numChunks = Math.ceil(data.length / size);
@@ -34,6 +35,9 @@ export function dataToFrames(
   dataSize: number = 120,
   replicas: number = 1
 ): string[] {
+  if (replicas > MAX_REPLICAS) {
+    throw new Error("replicas is too high. max is " + MAX_REPLICAS);
+  }
   const data = Buffer.from(dataOrStr);
   const lengthBuffer = Buffer.alloc(4);
   lengthBuffer.writeUInt32BE(data.length, 0);
@@ -41,10 +45,10 @@ export function dataToFrames(
   const all = Buffer.concat([lengthBuffer, md5Buffer, data]);
   const dataChunks = cut(all, dataSize);
   const r = [];
-  for (let nonce = 0; nonce < replicas; nonce++) {
+  for (let version = 0; version < replicas; version++) {
     for (let i = 0; i < dataChunks.length; i++) {
       const head = Buffer.alloc(5);
-      head.writeUInt8(nonce, 0);
+      head.writeUInt8(version, 0);
       head.writeUInt16BE(dataChunks.length, 1);
       head.writeUInt16BE(i, 3);
       r.push(Buffer.concat([head, dataChunks[i]]).toString("base64"));

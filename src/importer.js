@@ -2,6 +2,7 @@
 
 import md5 from "md5";
 import { Buffer } from "buffer";
+import { MAX_REPLICAS } from "./constants";
 
 type Frame = {
   framesCount: number,
@@ -19,6 +20,10 @@ export function parseFramesReducer(state: State, chunkStr: string): State {
   const frames = state || [];
   const chunk = Buffer.from(chunkStr, "base64");
   const head = chunk.slice(0, 5);
+  const version = head.readUInt8(0);
+  if (version >= MAX_REPLICAS) {
+    throw new Error("version " + version + " not supported");
+  }
   const framesCount = head.readUInt16BE(1);
   const index = head.readUInt16BE(3);
   const data = chunk.slice(5);
@@ -78,13 +83,9 @@ export function framesToData(frames: State): Buffer {
       .map(frame => frame.data)
   );
 
-  const expectedLength = all.readUInt32BE(all, 0);
+  const length = all.readUInt32BE(all, 0);
   const expectedMD5 = all.slice(4, 20).toString("hex");
-  const data = all.slice(20);
-
-  if (data.length !== expectedLength) {
-    throw new Error("invalid data: length doesn't match");
-  }
+  const data = all.slice(20).slice(0, length);
 
   if (md5(data) !== expectedMD5) {
     throw new Error("invalid data: md5 doesn't match");
