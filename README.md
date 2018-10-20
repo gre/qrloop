@@ -37,10 +37,10 @@ const frames: string[] = dataToFrames("hello world");
 const frames = dataToFrames(Buffer.from([ 0x00, 0x01, ... ]));
 const frames = dataToFrames(data, 140, 2);
 
-// dataToFrames( data[, dataSize, replicas ])
+// dataToFrames( data[, dataSize, loops ])
 // data: the complete data to encode in a series of QR code frames
 // dataSize: the number of bytes to use from data for each frame
-// replicas: (>= 1) the total number of loops to repeat the frames with varying a nonce. More there is, better the chance to not be stuck on a frame. Experience has shown some QR Code are harder to read.
+// loops: (>= 1) the total number of loops to repeat the frames with and with varying nonce and fountain codes frames. More there is loop, better the chance to not be stuck on a frame.
 ```
 
 You can find an implementation example in [`examples/web-text-exporter`](examples/web-text-exporter).
@@ -105,6 +105,8 @@ Statistically, this means the phone will catch many frames at the beginning and 
 To troubleshoot this, you can try different FPS speed. Experience have shown phones are able to scan about 30 frames per second (depends on implementations) but in practice it's better to be at max 5 fps.
 
 We also have empirically found that some frames are randomly harder for phone to catch. Therefore, we have in this library a concept of "replicas" which basically replicates frames with a nonce: one byte in the QR Code data completely change the qrcode, increasing our chance of falling on an "easy" frame.
+
+Finally, we have implemented "fountain codes" inspired from [Luby transform code](https://en.wikipedia.org/wiki/Luby_transform_code) that allows to recover frames faster.
 
 ### base64 on each frame
 

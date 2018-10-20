@@ -38,12 +38,24 @@ test("'hello world' x1000", () => {
     .join(" ");
   const framesExport = dataToFrames(Buffer.from(str), 50);
   let framesImport = null;
+  let frameLength = -1;
+  let frameCompleteReached = false;
+  let frameProgress = 0;
   for (let i = 0; i < framesExport.length; i++) {
-    expect(currentNumberOfFrames(framesImport)).toBe(i);
-    expect(progressOfFrames(framesImport)).toBe(i / framesExport.length);
-    expect(areFramesComplete(framesImport)).toBe(false);
+    expect(progressOfFrames(framesImport)).toBeGreaterThanOrEqual(
+      frameProgress
+    );
+    frameProgress = progressOfFrames(framesImport);
+    expect(frameProgress).toBeGreaterThanOrEqual(0);
+    expect(frameProgress).toBeLessThanOrEqual(1);
+    if (areFramesComplete(framesImport)) {
+      frameCompleteReached = true;
+    } else {
+      expect(frameCompleteReached).toBe(false); // never go back to uncomplete
+    }
     framesImport = parseFramesReducer(framesImport, framesExport[i]);
-    expect(totalNumberOfFrames(framesImport)).toBe(framesExport.length);
+    if (frameLength === -1) frameLength = totalNumberOfFrames(framesImport);
+    expect(totalNumberOfFrames(framesImport)).toBe(frameLength);
   }
   expect(areFramesComplete(framesImport)).toBe(true);
   expect(progressOfFrames(framesImport)).toBe(1);
