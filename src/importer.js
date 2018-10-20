@@ -64,11 +64,13 @@ function resolveFountains(state: State): State {
       head.writeUInt8(0, 0);
       head.writeUInt16BE(framesCount, 1);
       head.writeUInt16BE(index, 3);
-      frames.push({
+      const frame = {
         index,
         framesCount,
         data: recoveredData
-      });
+      };
+      frames.push(frame);
+      framesByIndex[index] = frame;
 
       fountainsQueue.splice(i, 1);
       // we start over to see if there is no impacted fountains

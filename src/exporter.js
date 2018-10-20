@@ -37,19 +37,11 @@ function makeLoop(
   const md5Buffer = Buffer.from(md5(data), "hex");
   const all = Buffer.concat([lengthBuffer, md5Buffer, data]);
   const dataChunks = cutAndPad(all, dataSize);
-  const frames = [];
-  for (let i = 0; i < dataChunks.length; i++) {
-    const head = Buffer.alloc(5);
-    head.writeUInt8(nonce, 0);
-    head.writeUInt16BE(dataChunks.length, 1);
-    head.writeUInt16BE(i, 3);
-    frames.push(Buffer.concat([head, dataChunks[i]]).toString("base64"));
-  }
   const fountains = [];
-  if (frames.length > 2) {
+  if (dataChunks.length > 2) {
     // TODO optimal number fcount and k still need to be determined
-    const fcount = Math.floor(frames.length / 6);
-    const k = Math.ceil(frames.length / 2);
+    const fcount = Math.floor(dataChunks.length / 6);
+    const k = Math.ceil(dataChunks.length / 2);
     for (let i = 0; i < fcount; i++) {
       const selectedFramesData = [];
       const head = Buffer.alloc(3 + 2 * k);
@@ -64,8 +56,19 @@ function makeLoop(
       fountains.push(Buffer.concat([head, data]).toString("base64"));
     }
   }
-  // TODO interleave frames and fountains
-  const result = frames.concat(fountains);
+  const result = [];
+  let j = 0;
+  const fountainEach = Math.floor(dataChunks.length / fountains.length);
+  for (let i = 0; i < dataChunks.length; i++) {
+    const head = Buffer.alloc(5);
+    head.writeUInt8(nonce, 0);
+    head.writeUInt16BE(dataChunks.length, 1);
+    head.writeUInt16BE(i, 3);
+    result.push(Buffer.concat([head, dataChunks[i]]).toString("base64"));
+    if (i % fountainEach === 0 && fountains[j]) {
+      result.push(fountains[j++]);
+    }
+  }
   return result;
 }
 
