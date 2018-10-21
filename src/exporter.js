@@ -4,6 +4,49 @@ import md5 from "md5";
 import Buffer, { cutAndPad, xor } from "./Buffer";
 import { MAX_NONCE, FOUNTAIN_V1 } from "./constants";
 
+export function makeFountainFrame(
+  dataChunks: Buffer[],
+  selectedFrameIndexes: number[]
+) {
+  const k = selectedFrameIndexes.length;
+  const head = Buffer.alloc(3 + 2 * k);
+  head.writeUInt8(FOUNTAIN_V1, 0);
+  head.writeUInt16BE(k, 1);
+  const selectedFramesData = [];
+  for (let j = 0; j < k; j++) {
+    const frameIndex = selectedFrameIndexes[j];
+    selectedFramesData.push(dataChunks[frameIndex]);
+    head.writeUInt16BE(frameIndex, 3 + 2 * j);
+  }
+  const data = xor(selectedFramesData);
+  return Buffer.concat([head, data]).toString("base64");
+}
+
+export function makeDataFrame({
+  data,
+  nonce,
+  totalFrames,
+  frameIndex
+}: {
+  data: Buffer,
+  nonce: number,
+  totalFrames: number,
+  frameIndex: number
+}) {
+  const head = Buffer.alloc(5);
+  head.writeUInt8(nonce, 0);
+  head.writeUInt16BE(totalFrames, 1);
+  head.writeUInt16BE(frameIndex, 3);
+  return Buffer.concat([head, data]).toString("base64");
+}
+
+export function wrapData(data: Buffer): Buffer {
+  const lengthBuffer = Buffer.alloc(4);
+  lengthBuffer.writeUInt32BE(data.length, 0);
+  const md5Buffer = Buffer.from(md5(data), "hex");
+  return Buffer.concat([lengthBuffer, md5Buffer, data]);
+}
+
 /**
  * in one loop:
  * the data is prepend in the frames with this head:
@@ -25,46 +68,40 @@ import { MAX_NONCE, FOUNTAIN_V1 } from "./constants";
  * It inspires idea from https://en.wikipedia.org/wiki/Luby_transform_code
  */
 function makeLoop(
-  dataOrStr: Buffer,
+  wrappedData: Buffer,
   dataSize: number,
   index: number,
   random: () => number
 ): string[] {
   const nonce = index % MAX_NONCE;
-  const data = Buffer.from(dataOrStr);
-  const lengthBuffer = Buffer.alloc(4);
-  lengthBuffer.writeUInt32BE(data.length, 0);
-  const md5Buffer = Buffer.from(md5(data), "hex");
-  const all = Buffer.concat([lengthBuffer, md5Buffer, data]);
-  const dataChunks = cutAndPad(all, dataSize);
+  const dataChunks = cutAndPad(wrappedData, dataSize);
   const fountains = [];
   if (dataChunks.length > 2) {
     // TODO optimal number fcount and k still need to be determined
     const fcount = Math.floor(dataChunks.length / 6);
     const k = Math.ceil(dataChunks.length / 2);
     for (let i = 0; i < fcount; i++) {
-      const selectedFramesData = [];
-      const head = Buffer.alloc(3 + 2 * k);
-      head.writeUInt8(FOUNTAIN_V1, 0);
-      head.writeUInt16BE(k, 1);
-      for (let j = 0; j < k; j++) {
-        const frameIndex = Math.floor(k * random());
-        selectedFramesData.push(dataChunks[frameIndex]);
-        head.writeUInt16BE(frameIndex, 3 + 2 * j);
-      }
-      const data = xor(selectedFramesData);
-      fountains.push(Buffer.concat([head, data]).toString("base64"));
+      const distribution = Array(dataChunks.length)
+        .fill(null)
+        .map((_, i) => ({ i, n: random() }))
+        .sort((a, b) => a.n - b.n)
+        .slice(0, k)
+        .map(o => o.i);
+      fountains.push(makeFountainFrame(dataChunks, distribution));
     }
   }
   const result = [];
   let j = 0;
   const fountainEach = Math.floor(dataChunks.length / fountains.length);
   for (let i = 0; i < dataChunks.length; i++) {
-    const head = Buffer.alloc(5);
-    head.writeUInt8(nonce, 0);
-    head.writeUInt16BE(dataChunks.length, 1);
-    head.writeUInt16BE(i, 3);
-    result.push(Buffer.concat([head, dataChunks[i]]).toString("base64"));
+    result.push(
+      makeDataFrame({
+        data: dataChunks[i],
+        nonce,
+        totalFrames: dataChunks.length,
+        frameIndex: i
+      })
+    );
     if (i % fountainEach === 0 && fountains[j]) {
       result.push(fountains[j++]);
     }
@@ -79,7 +116,7 @@ function makeLoop(
  * @param loops number of loops to generate. more loops increase chance for readers to read frames
  */
 export function dataToFrames(
-  dataOrStr: Buffer,
+  dataOrStr: Buffer | string,
   dataSize: number = 120,
   loops: number = 1
 ): string[] {
@@ -90,9 +127,11 @@ export function dataToFrames(
     return x - Math.floor(x);
   }
 
+  const wrappedData = wrapData(Buffer.from(dataOrStr));
+
   let r = [];
   for (let i = 0; i < loops; i++) {
-    r = r.concat(makeLoop(dataOrStr, dataSize, i, random));
+    r = r.concat(makeLoop(wrappedData, dataSize, i, random));
   }
   return r;
 }

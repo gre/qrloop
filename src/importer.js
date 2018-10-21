@@ -53,13 +53,14 @@ function resolveFountains(state: State): State {
         missing.push(index);
       }
     }
+
     if (missing.length === 0) {
       // fountain useless, simply eat it and continue on same index
       fountainsQueue.splice(i, 1);
     } else if (missing.length === 1) {
       // found a frame to recover. rebuild it
       const [index] = missing;
-      const recoveredData = xor(existingFramesData);
+      const recoveredData = xor(existingFramesData.concat([fountain.data]));
       const head = Buffer.alloc(5);
       head.writeUInt8(0, 0);
       head.writeUInt16BE(framesCount, 1);
