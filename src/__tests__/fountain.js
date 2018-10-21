@@ -70,12 +70,12 @@ test("a fountain can recover one missing frame", () => {
     frameIndex
   }));
   for (let i = 0; i < buffers.length - 1; i++) {
-    const framesWithoutOne = frames.slice(0, i).concat(frames.slice(i + 1));
+    const framesMissingOne = frames.slice(0, i).concat(frames.slice(i + 1));
     const fountainFrame = makeFountainFrame(
       buffers,
       frames.map(o => o.frameIndex)
     );
-    const missingOne = framesWithoutOne
+    const missingOne = framesMissingOne
       .map(o => o.frame)
       .reduce(parseFramesReducer, null);
     expect(areFramesComplete(missingOne)).toBe(false);
@@ -107,7 +107,7 @@ test("2 fountains cascading", () => {
     frameIndex
   }));
 
-  const framesWithoutThree = frames.slice(2, frames.length - 1);
+  const framesMissingThree = frames.slice(2, frames.length - 1);
   const fountain1Frame = makeFountainFrame(
     buffers,
     frames.map(o => o.frameIndex).slice(0, frames.length / 2)
@@ -116,14 +116,14 @@ test("2 fountains cascading", () => {
     buffers,
     frames.map(o => o.frameIndex)
   );
-  const missingTwo = framesWithoutThree
+  const missingThree = framesMissingThree
     .map(o => o.frame)
     .reduce(parseFramesReducer, null);
-  expect(areFramesComplete(missingTwo)).toBe(false);
-  expect(currentNumberOfFrames(missingTwo)).toBe(buffers.length - 3);
+  expect(areFramesComplete(missingThree)).toBe(false);
+  expect(currentNumberOfFrames(missingThree)).toBe(buffers.length - 3);
   const withFountains = [fountain1Frame, fountainAllFrame].reduce(
     parseFramesReducer,
-    missingTwo
+    missingThree
   );
   expect(areFramesComplete(withFountains)).toBe(false);
   expect(currentNumberOfFrames(withFountains)).toBe(buffers.length - 3);
