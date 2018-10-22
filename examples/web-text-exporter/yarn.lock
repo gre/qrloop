@@ -7944,10 +7944,10 @@ qrcode@^1.3.0:
     pngjs "^3.3.0"
     yargs "^8.0.2"
 
-qrloop@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/qrloop/-/qrloop-0.6.0.tgz#3de74fa9fff5eb74ad1c19f93a0016d8570f2a46"
-  integrity sha512-tLsE2CE4Zl+7tG6GrVBEtTeHvEYudQOEwyr0xXVmf+Z21QkBqzGvmGGDK9dOuJQ6SXpaTOfr4MthF9/CToZsBA==
+qrloop@0.8.0-beta.2:
+  version "0.8.0-beta.2"
+  resolved "https://registry.yarnpkg.com/qrloop/-/qrloop-0.8.0-beta.2.tgz#23253ffe4a2754a5752039225db81e58a068ae42"
+  integrity sha512-hCSS6pJ+eIDQGaHqztEq/WIn0w5T06nBWptCUl6oX3rJbdmpK7cg0cqGBSnB+pITKtzyvPpVe4t7L0tIGk7NhQ==
   dependencies:
     flow-typed "^2.5.1"
     md5 "^2.2.1"

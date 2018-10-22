@@ -39,7 +39,7 @@ test("corrupted data through framesToData should throw", () => {
   const framesExport = dataToFrames(data, 200);
   const framesImport = framesExport.reduce(parseFramesReducer, null);
 
-  framesImport[1].data[10]++; // corrupt one bit of the second frame
+  framesImport.frames[1].data[10]++; // corrupt one bit of the second frame
 
   expect(() => framesToData(framesImport)).toThrow();
 });
@@ -53,7 +53,7 @@ test("corrupted data can be recoverable", () => {
   const framesExport = dataToFrames(data, 200);
 
   const framesImport = framesExport.reduce(parseFramesReducer, null);
-  framesImport[1].data[10]++; // corrupt one bit of the second frame
+  framesImport.frames[1].data[10]++; // corrupt one bit of the second frame
   expect(() => framesToData(framesImport)).toThrow();
 
   const framesImport2 = framesExport.reduce(parseFramesReducer, framesImport);

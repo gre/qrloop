@@ -1,24 +1,54 @@
 // @flow
 
 import md5 from "md5";
-import { Buffer } from "buffer";
-import { MAX_REPLICAS } from "./constants";
+import Buffer, { cutAndPad, xor } from "./Buffer";
+import { MAX_NONCE, FOUNTAIN_V1 } from "./constants";
 
-function cut(data: Buffer, size: number): Buffer[] {
-  const numChunks = Math.ceil(data.length / size);
-  const chunks = new Array(numChunks);
-  for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
-    chunks[i] = data.slice(o, o + size);
+export function makeFountainFrame(
+  dataChunks: Buffer[],
+  selectedFrameIndexes: number[]
+) {
+  const k = selectedFrameIndexes.length;
+  const head = Buffer.alloc(3 + 2 * k);
+  head.writeUInt8(FOUNTAIN_V1, 0);
+  head.writeUInt16BE(k, 1);
+  const selectedFramesData = [];
+  for (let j = 0; j < k; j++) {
+    const frameIndex = selectedFrameIndexes[j];
+    selectedFramesData.push(dataChunks[frameIndex]);
+    head.writeUInt16BE(frameIndex, 3 + 2 * j);
   }
-  return chunks;
+  const data = xor(selectedFramesData);
+  return Buffer.concat([head, data]).toString("base64");
+}
+
+export function makeDataFrame({
+  data,
+  nonce,
+  totalFrames,
+  frameIndex
+}: {
+  data: Buffer,
+  nonce: number,
+  totalFrames: number,
+  frameIndex: number
+}) {
+  const head = Buffer.alloc(5);
+  head.writeUInt8(nonce, 0);
+  head.writeUInt16BE(totalFrames, 1);
+  head.writeUInt16BE(frameIndex, 3);
+  return Buffer.concat([head, data]).toString("base64");
+}
+
+export function wrapData(data: Buffer): Buffer {
+  const lengthBuffer = Buffer.alloc(4);
+  lengthBuffer.writeUInt32BE(data.length, 0);
+  const md5Buffer = Buffer.from(md5(data), "hex");
+  return Buffer.concat([lengthBuffer, md5Buffer, data]);
 }
 
 /**
- * export data into a chunk of string that you can generate a QR with
- * @param data the complete data to encode in a series of QR code frames
- * @param dataSize the number of bytes to use from data for each frame
- * @param replicas (>= 1) the total number of loops to repeat the frames with varying a nonce. More there is, better the chance to not be stuck on a frame. Experience has shown some QR Code are harder to read.
- *
+ * in one loop:
  * the data is prepend in the frames with this head:
  * 4 bytes: uint, data length
  * 16 bytes: md5 of data
@@ -29,30 +59,79 @@ function cut(data: Buffer, size: number): Buffer[] {
  *   2 bytes: uint, index of frame
  *   variable data
  *
+ * each "fountain" frame is base64 of:
+ *   1 byte: fountain version
+ *   2 bytes: number of K frames associated
+ *   K times 2 bytes: the index of each frame
+ *   variable data: the XOR of the frames data
+ *
+ * It inspires idea from https://en.wikipedia.org/wiki/Luby_transform_code
+ */
+function makeLoop(
+  wrappedData: Buffer,
+  dataSize: number,
+  index: number,
+  random: () => number
+): string[] {
+  const nonce = index % MAX_NONCE;
+  const dataChunks = cutAndPad(wrappedData, dataSize);
+  const fountains = [];
+  if (dataChunks.length > 2) {
+    // TODO optimal number fcount and k still need to be determined
+    const fcount = Math.floor(dataChunks.length / 6);
+    const k = Math.ceil(dataChunks.length / 2);
+    for (let i = 0; i < fcount; i++) {
+      const distribution = Array(dataChunks.length)
+        .fill(null)
+        .map((_, i) => ({ i, n: random() }))
+        .sort((a, b) => a.n - b.n)
+        .slice(0, k)
+        .map(o => o.i);
+      fountains.push(makeFountainFrame(dataChunks, distribution));
+    }
+  }
+  const result = [];
+  let j = 0;
+  const fountainEach = Math.floor(dataChunks.length / fountains.length);
+  for (let i = 0; i < dataChunks.length; i++) {
+    result.push(
+      makeDataFrame({
+        data: dataChunks[i],
+        nonce,
+        totalFrames: dataChunks.length,
+        frameIndex: i
+      })
+    );
+    if (i % fountainEach === 0 && fountains[j]) {
+      result.push(fountains[j++]);
+    }
+  }
+  return result;
+}
+
+/**
+ * Export data into one series of chunk of string that you can generate a QR with
+ * @param dataOrStr the complete data to encode in a series of QR code frames
+ * @param dataSize the number of bytes to use from data for each frame
+ * @param loops number of loops to generate. more loops increase chance for readers to read frames
  */
 export function dataToFrames(
-  dataOrStr: Buffer,
+  dataOrStr: Buffer | string,
   dataSize: number = 120,
-  replicas: number = 1
+  loops: number = 1
 ): string[] {
-  if (replicas > MAX_REPLICAS) {
-    throw new Error("replicas is too high. max is " + MAX_REPLICAS);
+  // Simple deterministic RNG
+  let seed = 1;
+  function random() {
+    let x = Math.sin(seed++) * 10000;
+    return x - Math.floor(x);
   }
-  const data = Buffer.from(dataOrStr);
-  const lengthBuffer = Buffer.alloc(4);
-  lengthBuffer.writeUInt32BE(data.length, 0);
-  const md5Buffer = Buffer.from(md5(data), "hex");
-  const all = Buffer.concat([lengthBuffer, md5Buffer, data]);
-  const dataChunks = cut(all, dataSize);
-  const r = [];
-  for (let version = 0; version < replicas; version++) {
-    for (let i = 0; i < dataChunks.length; i++) {
-      const head = Buffer.alloc(5);
-      head.writeUInt8(version, 0);
-      head.writeUInt16BE(dataChunks.length, 1);
-      head.writeUInt16BE(i, 3);
-      r.push(Buffer.concat([head, dataChunks[i]]).toString("base64"));
-    }
+
+  const wrappedData = wrapData(Buffer.from(dataOrStr));
+
+  let r = [];
+  for (let i = 0; i < loops; i++) {
+    r = r.concat(makeLoop(wrappedData, dataSize, i, random));
   }
   return r;
 }
