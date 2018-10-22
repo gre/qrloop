@@ -54,8 +54,12 @@ function resolveFountains(state: State): State {
       }
     }
 
-    if (missing.length === 0) {
+    if (fountain.data.length !== frames[0].data.length) {
+      // drop the fountain that no longer match the frames data length
+      fountainsQueue.splice(i, 1);
+    } else if (missing.length === 0) {
       // fountain useless, simply eat it and continue on same index
+      // TODO we could assert the data is equal to xor to do a checksum. not sure to do if does not match
       fountainsQueue.splice(i, 1);
     } else if (missing.length === 1) {
       // found a frame to recover. rebuild it
@@ -137,7 +141,12 @@ export function parseFramesReducer(_state: State, chunkStr: string): State {
     ...state,
     frames: state.frames
       // override frame by index and also make sure all frames have same framesCount. this allows to not be stucked and recover any scenario.
-      .filter(c => c.index !== index && c.framesCount === framesCount)
+      .filter(
+        c =>
+          c.index !== index &&
+          c.framesCount === framesCount &&
+          c.data.length === data.length
+      )
       .concat({ framesCount, index, data })
   });
 }
