@@ -54,7 +54,11 @@ function resolveFountains(state: State): State {
       }
     }
 
-    if (fountain.data.length !== frames[0].data.length) {
+    if (
+      existingFramesData.length > 0 &&
+      fountain.data.length !==
+        Math.min(...existingFramesData.map(f => f.length))
+    ) {
       // drop the fountain that no longer match the frames data length
       fountainsQueue.splice(i, 1);
     } else if (missing.length === 0) {
@@ -141,12 +145,7 @@ export function parseFramesReducer(_state: State, chunkStr: string): State {
     ...state,
     frames: state.frames
       // override frame by index and also make sure all frames have same framesCount. this allows to not be stucked and recover any scenario.
-      .filter(
-        c =>
-          c.index !== index &&
-          c.framesCount === framesCount &&
-          c.data.length === data.length
-      )
+      .filter(c => c.index !== index && c.framesCount === framesCount)
       .concat({ framesCount, index, data })
   });
 }
