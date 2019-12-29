@@ -8,7 +8,7 @@ import {
   areFramesComplete,
   framesToData,
   progressOfFrames
-} from "qrloop/importer";
+} from "qrloop";
 
 export default class QRLoopScanner extends React.Component<
   { onResult: string => void },
