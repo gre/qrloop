@@ -1,8 +1,5 @@
 // @flow
-
-export default (typeof Buffer !== "undefined"
-  ? Buffer
-  : require("buffer").Buffer);
+import { Buffer } from "buffer";
 
 export function cutAndPad(data: Buffer, size: number): Buffer[] {
   const numChunks = Math.ceil(data.length / size);

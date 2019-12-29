@@ -10,11 +10,10 @@
     "qr"
   ],
   "main": "lib/index.js",
+  "module": "lib-es/index.js",
   "scripts": {
-    "flow-typed": "flow-typed install -s",
-    "build": "babel --ignore __tests__ -sd lib src && flow-copy-source -i \"__tests__/**\" src lib",
+    "build": "./scripts/build.sh",
     "prepublish": "yarn build",
-    "watch": "babel -wsd lib src && flow-copy-source -wv src lib",
     "prettier": "prettier --write 'src/**/*.js'",
     "lint": "eslint src",
     "flow": "flow src",
@@ -37,23 +36,26 @@
   "author": "Gaëtan Renaudeau <renaudeau.gaetan@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "flow-typed": "^2.5.2",
+    "buffer": "^5.4.3",
     "md5": "^2.2.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-eslint": "^10.0.2",
-    "babel-jest": "^24.8.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-flow": "^6.23.0",
-    "babel-preset-stage-0": "^6.24.1",
-    "eslint": "^6.0.1",
+    "@babel/cli": "^7.7.7",
+    "@babel/core": "^7.7.7",
+    "@babel/plugin-proposal-class-properties": "^7.7.0",
+    "@babel/plugin-proposal-export-default-from": "^7.5.2",
+    "@babel/plugin-proposal-export-namespace-from": "^7.5.2",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/plugin-syntax-import-meta": "^7.2.0",
+    "@babel/preset-env": "^7.7.7",
+    "@babel/preset-flow": "^7.0.0",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.8.0",
     "eslint-plugin-babel": "^5.3.0",
-    "eslint-plugin-flowtype": "^3.11.1",
-    "flow-bin": "^0.102.0",
-    "flow-copy-source": "^2.0.7",
-    "jest": "^24.8.0",
-    "prettier": "^1.18.2"
+    "eslint-plugin-flowtype": "^4.5.2",
+    "flow-bin": "^0.114.0",
+    "flow-copy-source": "^2.0.9",
+    "jest": "^24.9.0",
+    "prettier": "^1.19.1"
   }
 }

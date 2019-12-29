@@ -1,7 +1,8 @@
 // @flow
 
 import md5 from "md5";
-import Buffer, { cutAndPad, xor } from "./Buffer";
+import { Buffer } from "buffer";
+import { cutAndPad, xor } from "./Buffer";
 import { MAX_NONCE, FOUNTAIN_V1 } from "./constants";
 
 export function makeFountainFrame(

@@ -30,7 +30,7 @@ There are 2 parts of the library, the "exporter" that want to export the data vi
 The exporter only have 1 function to use: `dataToFrames`.
 
 ```js
-import { dataToFrames } from "qrloop/exporter";
+import { dataToFrames } from "qrloop";
 
 // examples
 const frames: string[] = dataToFrames("hello world");
@@ -57,7 +57,7 @@ import {
   areFramesComplete,
   framesToData,
   progressOfFrames
-} from "qrloop/importer";
+} from "qrloop";
 
 const onResult = finalResult => console.log({ finalResult });
 

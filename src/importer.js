@@ -1,7 +1,8 @@
 // @flow
 
 import md5 from "md5";
-import Buffer, { xor } from "./Buffer";
+import { Buffer } from "buffer";
+import { xor } from "./Buffer";
 import { MAX_NONCE, FOUNTAIN_V1 } from "./constants";
 
 type Frame = {
