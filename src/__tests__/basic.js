@@ -1,12 +1,12 @@
-import { dataToFrames } from "../exporter";
 import {
+  dataToFrames,
   parseFramesReducer,
   areFramesComplete,
   progressOfFrames,
   currentNumberOfFrames,
   totalNumberOfFrames,
   framesToData
-} from "../importer";
+} from "..";
 
 test("empty data", () => {
   const str = "";

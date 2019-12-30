@@ -2,14 +2,12 @@ import {
   dataToFrames,
   makeFountainFrame,
   makeDataFrame,
-  wrapData
-} from "../exporter";
-import {
+  wrapData,
   parseFramesReducer,
   areFramesComplete,
   currentNumberOfFrames,
   framesToData
-} from "../importer";
+} from "..";
 import { cutAndPad } from "../Buffer";
 
 test("there is at least one fountain frame and it's recovering one frame", () => {

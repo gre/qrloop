@@ -1,12 +1,12 @@
-import { dataToFrames } from "../exporter";
 import {
+  dataToFrames,
   parseFramesReducer,
   areFramesComplete,
   progressOfFrames,
   currentNumberOfFrames,
   totalNumberOfFrames,
   framesToData
-} from "../importer";
+} from "..";
 
 test("'hello world' with 4 replicas", () => {
   const str = "hello world";

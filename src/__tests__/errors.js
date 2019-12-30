@@ -1,11 +1,11 @@
-import { dataToFrames } from "../exporter";
 import {
+  dataToFrames,
   parseFramesReducer,
   areFramesComplete,
   currentNumberOfFrames,
   totalNumberOfFrames,
   framesToData
-} from "../importer";
+} from "..";
 
 test("premature framesToData should throw", () => {
   expect(() => framesToData()).toThrow();
