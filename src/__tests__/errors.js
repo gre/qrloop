@@ -4,7 +4,7 @@ import {
   areFramesComplete,
   currentNumberOfFrames,
   totalNumberOfFrames,
-  framesToData
+  framesToData,
 } from "..";
 
 test("premature framesToData should throw", () => {

@@ -5,7 +5,7 @@ import {
   progressOfFrames,
   currentNumberOfFrames,
   totalNumberOfFrames,
-  framesToData
+  framesToData,
 } from "..";
 
 test("'hello world' with 4 replicas", () => {

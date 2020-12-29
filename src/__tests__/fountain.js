@@ -6,12 +6,12 @@ import {
   parseFramesReducer,
   areFramesComplete,
   currentNumberOfFrames,
-  framesToData
+  framesToData,
 } from "..";
 import { cutAndPad } from "../Buffer";
 
 test("there is at least one fountain frame and it's recovering one frame", () => {
-  [1000, 5000, 99999].forEach(size => {
+  [1000, 5000, 99999].forEach((size) => {
     const data = Buffer.from(
       Array(size)
         .fill(null)
@@ -42,7 +42,7 @@ test("wrapData", () => {
       data,
       nonce: 0,
       frameIndex,
-      totalFrames: buffers.length
+      totalFrames: buffers.length,
     })
   );
   const r = frames.reduce(parseFramesReducer, null);
@@ -63,18 +63,18 @@ test("a fountain can recover one missing frame", () => {
       data,
       nonce: 0,
       frameIndex,
-      totalFrames: buffers.length
+      totalFrames: buffers.length,
     }),
-    frameIndex
+    frameIndex,
   }));
   for (let i = 0; i < buffers.length - 1; i++) {
     const framesMissingOne = frames.slice(0, i).concat(frames.slice(i + 1));
     const fountainFrame = makeFountainFrame(
       buffers,
-      frames.map(o => o.frameIndex)
+      frames.map((o) => o.frameIndex)
     );
     const missingOne = framesMissingOne
-      .map(o => o.frame)
+      .map((o) => o.frame)
       .reduce(parseFramesReducer, null);
     expect(areFramesComplete(missingOne)).toBe(false);
     expect(currentNumberOfFrames(missingOne)).toBe(buffers.length - 1);
@@ -100,22 +100,22 @@ test("2 fountains cascading", () => {
       data,
       nonce: 0,
       frameIndex,
-      totalFrames: buffers.length
+      totalFrames: buffers.length,
     }),
-    frameIndex
+    frameIndex,
   }));
 
   const framesMissingThree = frames.slice(2, frames.length - 1);
   const fountain1Frame = makeFountainFrame(
     buffers,
-    frames.map(o => o.frameIndex).slice(0, frames.length / 2)
+    frames.map((o) => o.frameIndex).slice(0, frames.length / 2)
   );
   const fountainAllFrame = makeFountainFrame(
     buffers,
-    frames.map(o => o.frameIndex)
+    frames.map((o) => o.frameIndex)
   );
   const missingThree = framesMissingThree
-    .map(o => o.frame)
+    .map((o) => o.frame)
     .reduce(parseFramesReducer, null);
   expect(areFramesComplete(missingThree)).toBe(false);
   expect(currentNumberOfFrames(missingThree)).toBe(buffers.length - 3);

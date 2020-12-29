@@ -6,9 +6,9 @@ import { cutAndPad, xor } from "./Buffer";
 import { MAX_NONCE, FOUNTAIN_V1 } from "./constants";
 
 export function makeFountainFrame(
-  dataChunks: Buffer[],
+  dataChunks: typeof Buffer[],
   selectedFrameIndexes: number[]
-) {
+): string {
   const k = selectedFrameIndexes.length;
   const head = Buffer.alloc(3 + 2 * k);
   head.writeUInt8(FOUNTAIN_V1, 0);
@@ -27,13 +27,13 @@ export function makeDataFrame({
   data,
   nonce,
   totalFrames,
-  frameIndex
+  frameIndex,
 }: {
-  data: Buffer,
+  data: typeof Buffer,
   nonce: number,
   totalFrames: number,
-  frameIndex: number
-}) {
+  frameIndex: number,
+}): string {
   const head = Buffer.alloc(5);
   head.writeUInt8(nonce, 0);
   head.writeUInt16BE(totalFrames, 1);
@@ -41,7 +41,7 @@ export function makeDataFrame({
   return Buffer.concat([head, data]).toString("base64");
 }
 
-export function wrapData(data: Buffer): Buffer {
+export function wrapData(data: typeof Buffer): typeof Buffer {
   const lengthBuffer = Buffer.alloc(4);
   lengthBuffer.writeUInt32BE(data.length, 0);
   const md5Buffer = Buffer.from(md5(data), "hex");
@@ -69,7 +69,7 @@ export function wrapData(data: Buffer): Buffer {
  * It inspires idea from https://en.wikipedia.org/wiki/Luby_transform_code
  */
 function makeLoop(
-  wrappedData: Buffer,
+  wrappedData: typeof Buffer,
   dataSize: number,
   index: number,
   random: () => number
@@ -87,7 +87,7 @@ function makeLoop(
         .map((_, i) => ({ i, n: random() }))
         .sort((a, b) => a.n - b.n)
         .slice(0, k)
-        .map(o => o.i);
+        .map((o) => o.i);
       fountains.push(makeFountainFrame(dataChunks, distribution));
     }
   }
@@ -100,7 +100,7 @@ function makeLoop(
         data: dataChunks[i],
         nonce,
         totalFrames: dataChunks.length,
-        frameIndex: i
+        frameIndex: i,
       })
     );
     if (i % fountainEach === 0 && fountains[j]) {
@@ -117,7 +117,7 @@ function makeLoop(
  * @param loops number of loops to generate. more loops increase chance for readers to read frames
  */
 export function dataToFrames(
-  dataOrStr: Buffer | string,
+  dataOrStr: typeof Buffer | string,
   dataSize: number = 120,
   loops: number = 1
 ): string[] {

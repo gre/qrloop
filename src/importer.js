@@ -8,24 +8,24 @@ import { MAX_NONCE, FOUNTAIN_V1 } from "./constants";
 type Frame = {
   framesCount: number,
   index: number,
-  data: Buffer
+  data: typeof Buffer,
 };
 
 type Fountain = {
   frameIndexes: number[],
-  data: Buffer
+  data: typeof Buffer,
 };
 
 export type State = ?{
   frames: Frame[],
   fountainsQueue: Fountain[], // fountains not yet addressed
-  exploredFountains: string[] // cache of fountains that was addressed in order to not add them again in queue
+  exploredFountains: string[], // cache of fountains that was addressed in order to not add them again in queue
 };
 
 const initialState = {
   frames: [],
   fountainsQueue: [],
-  exploredFountains: []
+  exploredFountains: [],
 };
 
 function resolveFountains(state: State): State {
@@ -58,7 +58,7 @@ function resolveFountains(state: State): State {
     if (
       existingFramesData.length > 0 &&
       fountain.data.length !==
-        Math.min(...existingFramesData.map(f => f.length))
+        Math.min(...existingFramesData.map((f) => f.length))
     ) {
       // drop the fountain that no longer match the frames data length
       fountainsQueue.splice(i, 1);
@@ -77,7 +77,7 @@ function resolveFountains(state: State): State {
       const frame = {
         index,
         framesCount,
-        data: recoveredData
+        data: recoveredData,
       };
       frames.push(frame);
       framesByIndex[index] = frame;
@@ -93,7 +93,7 @@ function resolveFountains(state: State): State {
   return {
     ...state,
     frames,
-    fountainsQueue
+    fountainsQueue,
   };
 }
 
@@ -119,13 +119,13 @@ export function parseFramesReducer(_state: State, chunkStr: string): State {
     const frames = state.frames;
     const fountain = {
       frameIndexes,
-      data
+      data,
     };
     const fountainsQueue = state.fountainsQueue.concat(fountain);
     return resolveFountains({
       frames,
       fountainsQueue,
-      exploredFountains
+      exploredFountains,
     });
   }
 
@@ -146,8 +146,8 @@ export function parseFramesReducer(_state: State, chunkStr: string): State {
     ...state,
     frames: state.frames
       // override frame by index and also make sure all frames have same framesCount. this allows to not be stucked and recover any scenario.
-      .filter(c => c.index !== index && c.framesCount === framesCount)
-      .concat({ framesCount, index, data })
+      .filter((c) => c.index !== index && c.framesCount === framesCount)
+      .concat({ framesCount, index, data }),
   });
 }
 
@@ -181,7 +181,7 @@ export const areFramesComplete = (s: State): boolean =>
 /**
  * return final result of the frames. assuming you have checked `areFramesComplete`
  */
-export function framesToData(s: State): Buffer {
+export function framesToData(s: State): typeof Buffer {
   if (!s) {
     throw new Error("invalid date: frames is undefined");
   }
@@ -189,7 +189,7 @@ export function framesToData(s: State): Buffer {
     s.frames
       .slice(0)
       .sort((a, b) => a.index - b.index)
-      .map(frame => frame.data)
+      .map((frame) => frame.data)
   );
 
   const length = all.readUInt32BE(0);

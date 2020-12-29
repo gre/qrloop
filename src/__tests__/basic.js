@@ -5,7 +5,7 @@ import {
   progressOfFrames,
   currentNumberOfFrames,
   totalNumberOfFrames,
-  framesToData
+  framesToData,
 } from "..";
 
 test("empty data", () => {
@@ -33,9 +33,7 @@ test("'hello world'", () => {
 });
 
 test("'hello world' x1000", () => {
-  let str = Array(1000)
-    .fill("hello world")
-    .join(" ");
+  let str = Array(1000).fill("hello world").join(" ");
   const framesExport = dataToFrames(Buffer.from(str), 50);
   let framesImport = null;
   let frameLength = -1;
