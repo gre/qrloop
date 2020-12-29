@@ -5,7 +5,7 @@ import QRLoopScanner from "./QRLoopScanner";
 
 export default class App extends React.Component<{}, { result: ?string }> {
   state = {
-    result: null
+    result: null,
   };
 
   onResult = (result: string) => {
@@ -27,12 +27,12 @@ export default class App extends React.Component<{}, { result: ?string }> {
 
 const styles = StyleSheet.create({
   root: {
-    flex: 1
+    flex: 1,
   },
   container: {
-    padding: 20
+    padding: 20,
   },
   text: {
-    fontSize: 14
-  }
+    fontSize: 14,
+  },
 });

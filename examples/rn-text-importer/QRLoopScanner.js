@@ -1,22 +1,22 @@
 // @flow
 import React from "react";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
-import * as Progress from "react-native-progress";
-import { Camera, Permissions } from "expo";
+import { Camera } from "expo-camera";
+import * as Permissions from "expo-permissions";
 import {
   parseFramesReducer,
   areFramesComplete,
   framesToData,
-  progressOfFrames
+  progressOfFrames,
 } from "qrloop";
 
 export default class QRLoopScanner extends React.Component<
-  { onResult: string => void },
+  { onResult: (string) => void },
   { hasCameraPermission: ?boolean, progress: number }
 > {
   state = {
     hasCameraPermission: null,
-    progress: 0
+    progress: 0,
   };
 
   async componentWillMount() {
@@ -33,7 +33,7 @@ export default class QRLoopScanner extends React.Component<
         this.props.onResult(framesToData(frames).toString());
       } else {
         this.setState({
-          progress: progressOfFrames(frames)
+          progress: progressOfFrames(frames),
         });
       }
     } catch (e) {
@@ -59,19 +59,10 @@ export default class QRLoopScanner extends React.Component<
         onBarCodeScanned={this.onBarCodeScanned}
       >
         <Text style={styles.title}>qrloop.netlify.com</Text>
-        <Text style={styles.title}>Scan the QRCode loop</Text>
+        <Text style={styles.title}>
+          Scan the QRCode loop ({(progress * 100).toFixed(0)}%)
+        </Text>
         <View style={styles.rect} />
-        <Progress.Circle
-          style={styles.progress}
-          showsText={!!progress}
-          progress={progress}
-          color="white"
-          borderWidth={0}
-          thickness={progress ? 4 : 0}
-          size={80}
-          strokeCap="round"
-          textStyle={styles.progressText}
-        />
       </Camera>
     );
   }
@@ -83,24 +74,24 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   rect: {
     width: win.width - 100,
     height: win.width - 100,
     borderColor: "white",
-    borderWidth: 4
+    borderWidth: 4,
   },
   title: {
     color: "white",
     fontSize: 20,
-    margin: 20
+    margin: 20,
   },
   progressText: {
     color: "white",
-    fontSize: 20
+    fontSize: 20,
   },
   progress: {
-    margin: 20
-  }
+    margin: 20,
+  },
 });
