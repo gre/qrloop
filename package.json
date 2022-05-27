@@ -1,6 +1,6 @@
 {
   "name": "qrloop",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Envelop big blob of data into frames that can be displayed in series of QR Codes",
   "keywords": [
     "buffer",
