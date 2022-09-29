@@ -1,26 +1,27 @@
-// @flow
-
 import md5 from "md5";
 import { Buffer } from "buffer";
 import { xor } from "./Buffer";
 import { MAX_NONCE, FOUNTAIN_V1 } from "./constants";
 
 type Frame = {
-  framesCount: number,
-  index: number,
-  data: typeof Buffer,
+  framesCount: number;
+  index: number;
+  data: Buffer;
 };
 
 type Fountain = {
-  frameIndexes: number[],
-  data: typeof Buffer,
+  frameIndexes: number[];
+  data: Buffer;
 };
 
-export type State = ?{
-  frames: Frame[],
-  fountainsQueue: Fountain[], // fountains not yet addressed
-  exploredFountains: string[], // cache of fountains that was addressed in order to not add them again in queue
-};
+export type State =
+  | {
+      frames: Frame[];
+      fountainsQueue: Fountain[]; // fountains not yet addressed
+      exploredFountains: string[]; // cache of fountains that was addressed in order to not add them again in queue
+    }
+  | undefined
+  | null;
 
 const initialState = {
   frames: [],
@@ -154,7 +155,7 @@ export function parseFramesReducer(_state: State, chunkStr: string): State {
 /**
  * retrieve the total number of frames
  */
-export const totalNumberOfFrames = (s: State): ?number =>
+export const totalNumberOfFrames = (s: State): number | undefined | null =>
   s && s.frames.length > 0 ? s.frames[0].framesCount : null;
 
 /**
@@ -181,7 +182,7 @@ export const areFramesComplete = (s: State): boolean =>
 /**
  * return final result of the frames. assuming you have checked `areFramesComplete`
  */
-export function framesToData(s: State): typeof Buffer {
+export function framesToData(s?: State): Buffer {
   if (!s) {
     throw new Error("invalid date: frames is undefined");
   }

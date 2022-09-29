@@ -23,6 +23,7 @@ test("there is at least one fountain frame and it's recovering one frame", () =>
     for (let i = 0; i < framesExport.length; i++) {
       acc = parseFramesReducer(acc, framesExport[i]);
     }
+    if (!acc) throw new Error("falsy acc");
 
     expect(acc.fountainsQueue.length).toBe(0);
     expect(acc.exploredFountains.length).toBeGreaterThan(0);

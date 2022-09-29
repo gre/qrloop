@@ -25,7 +25,7 @@ test("premature framesToData should throw", () => {
 
   expect(areFramesComplete(framesImport)).toBe(false);
   expect(currentNumberOfFrames(framesImport)).toBeLessThan(
-    totalNumberOfFrames(framesImport)
+    totalNumberOfFrames(framesImport) || -1
   );
   expect(() => framesToData(framesImport)).toThrow();
 });
@@ -38,6 +38,8 @@ test("corrupted data through framesToData should throw", () => {
   );
   const framesExport = dataToFrames(data, 200);
   const framesImport = framesExport.reduce(parseFramesReducer, null);
+
+  if (!framesImport) throw new Error("falsy framesImport");
 
   framesImport.frames[1].data[10]++; // corrupt one bit of the second frame
 
@@ -53,26 +55,11 @@ test("corrupted data can be recoverable", () => {
   const framesExport = dataToFrames(data, 200);
 
   const framesImport = framesExport.reduce(parseFramesReducer, null);
+  if (!framesImport) throw new Error("falsy framesImport");
+
   framesImport.frames[1].data[10]++; // corrupt one bit of the second frame
   expect(() => framesToData(framesImport)).toThrow();
 
   const framesImport2 = framesExport.reduce(parseFramesReducer, framesImport);
   expect(framesToData(framesImport2)).toMatchObject(data);
-});
-
-test("extra frames added to data should throw", () => {
-  expect(() =>
-    framesToData(
-      dataToFrames(
-        Buffer.from(
-          Array(1000)
-            .fill(null)
-            .map((_, i) => i % 256)
-        ),
-        200
-      )
-        .reduce(parseFramesReducer, null)
-        .concat(dataToFrames(Buffer.from("foo"), 100))
-    )
-  ).toThrow();
 });

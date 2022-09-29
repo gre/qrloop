@@ -1,7 +1,6 @@
-// @flow
 import { Buffer } from "buffer";
 
-export function cutAndPad(data: typeof Buffer, size: number): typeof Buffer[] {
+export function cutAndPad(data: Buffer, size: number): Buffer[] {
   const numChunks = Math.ceil(data.length / size);
   const chunks = new Array(numChunks);
   for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
@@ -18,7 +17,7 @@ export function cutAndPad(data: typeof Buffer, size: number): typeof Buffer[] {
   return chunks;
 }
 
-export function xor(buffers: typeof Buffer[]): typeof Buffer {
+export function xor(buffers: Buffer[]): Buffer {
   const result = Buffer.from(buffers[0]);
   for (let i = 1; i < buffers.length; ++i) {
     const buffer = buffers[i];
