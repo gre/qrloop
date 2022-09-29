@@ -1,12 +1,10 @@
-// @flow
-
 import md5 from "md5";
 import { Buffer } from "buffer";
 import { cutAndPad, xor } from "./Buffer";
 import { MAX_NONCE, FOUNTAIN_V1 } from "./constants";
 
 export function makeFountainFrame(
-  dataChunks: typeof Buffer[],
+  dataChunks: Buffer[],
   selectedFrameIndexes: number[]
 ): string {
   const k = selectedFrameIndexes.length;
@@ -29,10 +27,10 @@ export function makeDataFrame({
   totalFrames,
   frameIndex,
 }: {
-  data: typeof Buffer,
-  nonce: number,
-  totalFrames: number,
-  frameIndex: number,
+  data: Buffer;
+  nonce: number;
+  totalFrames: number;
+  frameIndex: number;
 }): string {
   const head = Buffer.alloc(5);
   head.writeUInt8(nonce, 0);
@@ -41,7 +39,7 @@ export function makeDataFrame({
   return Buffer.concat([head, data]).toString("base64");
 }
 
-export function wrapData(data: typeof Buffer): typeof Buffer {
+export function wrapData(data: Buffer): Buffer {
   const lengthBuffer = Buffer.alloc(4);
   lengthBuffer.writeUInt32BE(data.length, 0);
   const md5Buffer = Buffer.from(md5(data), "hex");
@@ -69,7 +67,7 @@ export function wrapData(data: typeof Buffer): typeof Buffer {
  * It inspires idea from https://en.wikipedia.org/wiki/Luby_transform_code
  */
 function makeLoop(
-  wrappedData: typeof Buffer,
+  wrappedData: Buffer,
   dataSize: number,
   index: number,
   random: () => number
@@ -117,7 +115,7 @@ function makeLoop(
  * @param loops number of loops to generate. more loops increase chance for readers to read frames
  */
 export function dataToFrames(
-  dataOrStr: typeof Buffer | string,
+  dataOrStr: Buffer | string,
   dataSize: number = 120,
   loops: number = 1
 ): string[] {
@@ -130,7 +128,7 @@ export function dataToFrames(
 
   const wrappedData = wrapData(Buffer.from(dataOrStr));
 
-  let r = [];
+  let r: string[] = [];
   for (let i = 0; i < loops; i++) {
     r = r.concat(makeLoop(wrappedData, dataSize, i, random));
   }

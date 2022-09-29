@@ -10,13 +10,8 @@
     "qr"
   ],
   "main": "lib/index.js",
-  "module": "lib-es/index.js",
   "scripts": {
-    "build": "./scripts/build.sh",
-    "prepublish": "yarn build",
-    "prettier": "prettier --write 'src/**/*.js'",
-    "lint": "eslint src",
-    "flow": "flow src",
+    "prepublish": "tsc",
     "test": "jest src"
   },
   "files": [
@@ -40,22 +35,10 @@
     "md5": "^2.3.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.17.10",
-    "@babel/core": "^7.18.2",
-    "@babel/plugin-proposal-class-properties": "^7.17.12",
-    "@babel/plugin-proposal-export-default-from": "^7.17.12",
-    "@babel/plugin-proposal-export-namespace-from": "^7.17.12",
-    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
-    "@babel/plugin-syntax-import-meta": "^7.10.4",
-    "@babel/preset-env": "^7.18.2",
-    "@babel/preset-flow": "^7.17.12",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^8.16.0",
-    "eslint-plugin-babel": "^5.3.1",
-    "eslint-plugin-flowtype": "^8.0.3",
-    "flow-bin": "^0.179.0",
-    "flow-copy-source": "^2.0.9",
+    "@types/jest": "^29.1.0",
+    "@types/md5": "^2.3.2",
     "jest": "^28.1.0",
-    "prettier": "^2.6.2"
+    "ts-jest": "^29.0.3",
+    "typescript": "4"
   }
 }
