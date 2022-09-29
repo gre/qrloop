@@ -16,9 +16,7 @@
   },
   "files": [
     "lib",
-    "src",
-    "exporter.js",
-    "importer.js"
+    "src"
   ],
   "repository": {
     "type": "git",

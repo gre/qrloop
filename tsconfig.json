@@ -5,6 +5,7 @@
     "sourceMap": true,
     "outDir": "./lib",
     "esModuleInterop": true,
+    "declaration": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitAny": true,
